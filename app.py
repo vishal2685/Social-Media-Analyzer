@@ -15,19 +15,16 @@ path_to_tesseract = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 temp_audio_file = "temp_audio.wav"
 
 # Retrieve OpenAI API key from environment variable
-openai.api_key = "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"
+openai.api_key = "Past_your_openai_api+key"
 
 # Function to process image text extraction
 def extract_text_from_image(image_url):
-    # Download the image from the URL
-    response = requests.get(image_url)
-    img = Image.open(BytesIO(response.content))
 
     # Provide the tesseract executable location to pytesseract library
     pytesseract.pytesseract.tesseract_cmd = path_to_tesseract
 
     # Extract text from the image
-    text = pytesseract.image_to_string(img)
+    text = pytesseract.image_to_string(image_url)
 
     return text.strip()
 
@@ -98,4 +95,4 @@ def uploader():
         return result
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)
