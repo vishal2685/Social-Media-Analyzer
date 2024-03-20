@@ -96,3 +96,6 @@ def uploader():
         f.save(filepath)
         result = process_data(filepath, caption)
         return result
+
+if __name__ == '__main__':
+    app.run(debug=False,host='0.0.0.0')
