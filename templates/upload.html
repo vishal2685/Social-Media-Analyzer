@@ -1,64 +1,86 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: rgb(49, 54, 63);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Add CSS styles for output box */
+        #outputBox {
+            margin-top: 20px;
+            display: none;
+            background-color: rgba(255, 255, 255, 0.9); /* Transparent white background */
+            border-radius: 10px; /* Rounded corners */
+            padding: 20px; /* Add padding */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+        }
 
-.container {
-    /* width: auto; */
-    /* height: 45%; */
-    padding: 20px;
-    background-color: rgba(118, 171, 174, 0.311);
-    border-radius: 10px;
-    box-shadow: 0px 0px 20px rgb(247, 238, 221);
-}
-.output {
-    /* Style output text */
-    color: #333; /* Dark gray color */
-    font-size: 16px;
-    margin-top: 10px;
-}
+        /* Add CSS for container */
+        .container {
+            width: 35%;
+            margin: 0 auto;
+            height: 400px; /* Fixed height */
+            overflow: auto; /* Add overflow auto */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: rgb(247, 238, 221);">Social Media Analyzer</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <label for="file" style="color: rgb(187, 225, 250);">Upload File:</label>
+            <input type="file" id="file" name="file" accept="image/*, video/*">
+            <br>
+            <label for="caption" style="color: rgb(187, 225, 250);">Write Caption:</label>
+            <textarea id="caption" name="caption" rows="3" cols="20"></textarea>
+            <br>
+            <button type="button" id="submitBtn" onclick="submitForm()">Submit</button>
+            
+            <!-- Output Box -->
+            <div id="outputBox">
+                <h2>Output:</h2>
+                <div id="output"></div>
+            </div>
+        </form>
+    </div>
 
-h1 {
-    color: #333;
-    text-align: center;
-}
+    <!-- JavaScript to fetch and display output -->
+    <script>
+        function submitForm() {
+            var submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true; // Disable the submit button
 
-label {
-    font-size: 18px;
-    color: #555;
-}
+            var form = document.getElementById('uploadForm');
+            var formData = new FormData(form);
 
-input[type="file"], textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    background-color: rgba(83, 92, 145, 0.333); /* Light gray */
-    color: #49ec09; /* Dark gray */
-}
+            var fileInput = document.getElementById('file');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('No file uploaded.'); // Show alert if no file is uploaded
+                submitButton.disabled = false; // Re-enable the submit button
+                return;
+            }
 
-button {
-    background-color: rgb(118, 171, 174);
-    color: white;
-    padding: 10px 20px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-}
+            alert('Uploading...'); // Alert user that uploading is in progress
+            
+            // Clear output field
+            document.getElementById('output').innerHTML = '';
 
-button:hover {
-    background-color: #45a049;
-}
-
-button:active {
-    background-color: #3e8e41;
-}
+            fetch('/uploader', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('output').innerHTML = data;
+                document.getElementById('outputBox').style.display = 'block'; // Show output box
+                submitButton.disabled = false; // Re-enable the submit button
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitButton.disabled = false; // Re-enable the submit button in case of error
+            });
+        }
+    </script>
+</body>
+</html>
